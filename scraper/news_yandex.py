@@ -5,11 +5,6 @@ import sys
 
 
 class Yandex_news():
-  # def __init__(self, word):
-  #   self.word = word
-
-  # def word_cleans(self, word):
-  #   word
 
   def search_news(self, word ):
     word
@@ -31,6 +26,7 @@ class Yandex_news():
                  'Sec-Fetch-User': '?1',
                  'Upgrade-Insecure-Requests': '1',
                  'User-Agent': '''Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.134 YaBrowser/22.7.1.806 Yowser/2.5 Safari/537.36Y-Browser-Experiments: NjEzNTk5LDAsLTE='''}
+    word = str(word).replace("+", " ")
 
     response = requests.get(f'https://newssearch.yandex.ru/news/search?text={word}', headers = heder_var)
     response_txt = response.text
@@ -38,12 +34,8 @@ class Yandex_news():
 
 
     object_soup = soup.find_all('article', class_="news-search-story news-search__main-item mg-grid__item")
-    # print(object_soup)
-    # for i in range(len(object_soup)):
     dict_var = []
-    print("000000")
-    # print(word[:-1])
-    # print(object_soup)
+
     for object_link_soup in object_soup:
       # print("object_link_soup:_", object_link_soup)
       try:
@@ -52,20 +44,27 @@ class Yandex_news():
         object_link = object_div.find('a', class_="news-search-story__title-link")
         object_time_link = object_div.find('span', class_="news-search-story__time").text
 
-      except (AttributeError) as re:
-        print(f"""{re} 
-and
-{sys.exc_info()}""")
+        prwie_news = soup.find('div', class_='mg-text-cut mg-snippet__description')
+        prewie_work = prwie_news.find_all('em', class_='news-search-story__searched')
 
-      if str(object_link_soup).lower().find(word[:-1]) != -1:
-        href = object_link['href']
-        # print(object_link.text, '-------', object_time_link, '-------', href)
-        dict_var.append({str(object_link.text).replace('\xa0', '') : [object_time_link, href]})
-
-
-      elif str(object_link_soup).lower().find(word) == -1:
-        print("11111")
+      except (AttributeError, UnboundLocalError) as re:
+#         print(f"""{re}
+# and
+# {sys.exc_info()}""")
         pass
+      for w in word.split(" "):
+        for em in prewie_work:
+
+          em = em.text
+          if str(object_link_soup).lower().find(word[:-1]) != -1 or str(em).find(w[:-1]) != -1:
+            href = object_link['href']
+            # print(object_link.text, '-------', object_time_link, '-------', href)
+            dict_var.append({str(object_link.text).replace('\xa0', '') : [object_time_link, href]})
+
+
+          elif str(object_link_soup).lower().find(word) == -1:
+            # print("11111")
+            pass
     return dict_var
 
 
