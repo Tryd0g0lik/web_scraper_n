@@ -37,7 +37,7 @@ class Yandex_news():
     dict_var = []
 
     for object_link_soup in object_soup:
-      # print("object_link_soup:_", object_link_soup)
+
       try:
         object_div = object_link_soup.find('div', class_='news-search-story__head')
         objeck_h2_link = object_div.find('h2', class_='news-search-story__title')
@@ -48,9 +48,7 @@ class Yandex_news():
         prewie_work = prwie_news.find_all('em', class_='news-search-story__searched')
 
       except (AttributeError, UnboundLocalError) as re:
-#         print(f"""{re}
-# and
-# {sys.exc_info()}""")
+
         pass
       for w in word.split(" "):
         for em in prewie_work:
@@ -58,18 +56,12 @@ class Yandex_news():
           em = em.text
           if str(object_link_soup).lower().find(word[:-1]) != -1 or str(em).find(w[:-1]) != -1:
             href = object_link['href']
-            # print(object_link.text, '-------', object_time_link, '-------', href)
+
             dict_var.append({str(object_link.text).replace('\xa0', '') : [object_time_link, href]})
 
 
           elif str(object_link_soup).lower().find(word) == -1:
-            # print("11111")
+
             pass
     return dict_var
 
-
-
-
-
-
-    # print(object_soup)
